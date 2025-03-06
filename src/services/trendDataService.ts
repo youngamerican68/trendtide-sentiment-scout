@@ -1,5 +1,6 @@
-
 import { useState, useEffect } from 'react';
+import { fetchTikTokTrends } from './tiktokApiService';
+import { analyzeHashtagSentiment } from './sentimentAnalysisService';
 
 // Types for trending hashtags
 export interface TrendingHashtag {
@@ -30,65 +31,24 @@ export interface ProductRecommendation {
   image: string;
 }
 
-// Mock API endpoints - would be replaced with real API calls
+// Function to fetch trending hashtags
 export const fetchTrendingHashtags = async (): Promise<TrendingHashtag[]> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  // In a real implementation, this would be an API call
-  return [
-    { 
-      id: 1,
-      hashtag: '#SmartGadgets',
-      growth: '+242%',
-      views: '1.2M',
-      videos: '5.4K',
-      sentiment: 'positive',
-      isNew: true,
-    },
-    { 
-      id: 2,
-      hashtag: '#HomeOfficeSetup',
-      growth: '+128%',
-      views: '890K',
-      videos: '3.2K',
-      sentiment: 'positive',
-      isNew: false,
-    },
-    { 
-      id: 3,
-      hashtag: '#MinimalistDesign',
-      growth: '+94%',
-      views: '720K',
-      videos: '2.9K',
-      sentiment: 'neutral',
-      isNew: false,
-    },
-    { 
-      id: 4,
-      hashtag: '#TechReviews',
-      growth: '+76%',
-      views: '1.8M',
-      videos: '6.7K',
-      sentiment: 'positive',
-      isNew: false,
-    },
-    { 
-      id: 5,
-      hashtag: '#BudgetFinds',
-      growth: '+65%',
-      views: '450K',
-      videos: '1.8K',
-      sentiment: 'neutral',
-      isNew: true,
-    }
-  ];
+  try {
+    // Use the TikTok API service to fetch trends
+    return await fetchTikTokTrends();
+  } catch (error) {
+    console.error('Error fetching trending hashtags:', error);
+    throw error;
+  }
 };
 
+// Function to fetch sentiment data
 export const fetchSentimentData = async (): Promise<SentimentData[]> => {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1200));
   
+  // In a real implementation, this would aggregate sentiment analysis results
+  // from multiple hashtags or comments
   return [
     { sentiment: 'Positive', percentage: 65, color: 'bg-trend-positive' },
     { sentiment: 'Neutral', percentage: 25, color: 'bg-trend-neutral' },
@@ -96,6 +56,7 @@ export const fetchSentimentData = async (): Promise<SentimentData[]> => {
   ];
 };
 
+// Function to fetch product recommendations
 export const fetchProductRecommendations = async (): Promise<ProductRecommendation[]> => {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1800));
@@ -131,7 +92,7 @@ export const fetchProductRecommendations = async (): Promise<ProductRecommendati
   ];
 };
 
-// Custom hooks for using the data
+// Custom hooks for using the data (unchanged, just using the updated functions)
 
 export const useTrendingHashtags = () => {
   const [data, setData] = useState<TrendingHashtag[]>([]);

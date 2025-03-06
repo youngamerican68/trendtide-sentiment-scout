@@ -1,23 +1,57 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Search, AlertCircle } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import SentimentBadge from './SentimentBadge';
 import { LoadingText } from './LoadingEffect';
 import { useSentimentData } from '@/services/trendDataService';
+import { analyzeHashtagSentiment } from '@/services/sentimentAnalysisService';
 
 const SentimentAnalysis = () => {
   const { data: sentimentData, isLoading, error } = useSentimentData();
   const [hashtag, setHashtag] = useState('');
   const [analyzedHashtag, setAnalyzedHashtag] = useState('#HomeOfficeSetup');
+  const [hashtagSentiment, setHashtagSentiment] = useState<'positive' | 'neutral' | 'negative' | 'loading'>('positive');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (hashtag.trim()) {
-      setAnalyzedHashtag(hashtag.startsWith('#') ? hashtag : `#${hashtag}`);
+      const formattedHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
+      setAnalyzedHashtag(formattedHashtag);
+      setHashtagSentiment('loading');
+      setIsAnalyzing(true);
       setHashtag('');
+      
+      try {
+        // Analyze the sentiment of the hashtag
+        const analysis = await analyzeHashtagSentiment(formattedHashtag);
+        setHashtagSentiment(analysis.overallSentiment.sentiment);
+      } catch (error) {
+        console.error('Error analyzing hashtag sentiment:', error);
+        setHashtagSentiment('neutral'); // Fallback
+      } finally {
+        setIsAnalyzing(false);
+      }
     }
   };
+
+  // Initial sentiment analysis on component mount
+  useEffect(() => {
+    const analyzeInitialHashtag = async () => {
+      try {
+        setIsAnalyzing(true);
+        const analysis = await analyzeHashtagSentiment(analyzedHashtag);
+        setHashtagSentiment(analysis.overallSentiment.sentiment);
+      } catch (error) {
+        console.error('Error analyzing initial hashtag sentiment:', error);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    };
+    
+    analyzeInitialHashtag();
+  }, []);
 
   return (
     <DashboardCard 
@@ -77,6 +111,7 @@ const SentimentAnalysis = () => {
               className="w-full py-2 px-3 rounded-md bg-secondary border-border text-sm focus-visible:ring-1 focus-visible:ring-primary"
               value={hashtag}
               onChange={(e) => setHashtag(e.target.value)}
+              disabled={isAnalyzing}
             />
           </form>
           <div className="flex justify-between mt-4">
@@ -84,7 +119,7 @@ const SentimentAnalysis = () => {
               <span className="font-medium text-trend-rising mr-1">{analyzedHashtag}</span>
               <span>Sentiment:</span>
             </div>
-            <SentimentBadge sentiment="positive" size="sm" />
+            <SentimentBadge sentiment={isAnalyzing ? 'loading' : hashtagSentiment} size="sm" />
           </div>
         </div>
       </div>
