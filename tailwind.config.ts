@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom theme colors for our application
+				'trend-positive': '#34D399',
+				'trend-neutral': '#A3A3A3',
+				'trend-negative': '#F87171',
+				'trend-rising': '#60A5FA',
+				'trend-viral': '#8B5CF6',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +91,49 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-soft': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' },
+				},
+				'fade-in': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'slide-up-fade': {
+					'0%': { opacity: '0', transform: 'translateY(8px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'slide-down-fade': {
+					'0%': { opacity: '0', transform: 'translateY(-8px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'scale-in': {
+					'0%': { opacity: '0', transform: 'scale(0.95)' },
+					'100%': { opacity: '1', transform: 'scale(1)' }
+				},
+				'spinner': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'slide-up-fade': 'slide-up-fade 0.3s ease-out',
+				'slide-down-fade': 'slide-down-fade 0.3s ease-out',
+				'scale-in': 'scale-in 0.2s ease-out',
+				'spinner': 'spinner 1.5s linear infinite'
+			},
+			boxShadow: {
+				'soft': '0 2px 10px rgba(0, 0, 0, 0.05)',
+				'medium': '0 4px 20px rgba(0, 0, 0, 0.08)',
+				'glass': '0 8px 32px rgba(0, 0, 0, 0.06)'
+			},
+			backdropBlur: {
+				'xs': '2px',
 			}
 		}
 	},
