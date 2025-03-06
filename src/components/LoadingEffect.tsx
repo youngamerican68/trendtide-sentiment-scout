@@ -35,14 +35,14 @@ export const LoadingText = ({ lines = 3, width = "100%" }) => {
         .map((_, i) => (
           <LoadingEffect 
             key={i} 
-            width={typeof width === 'string' ? width : width[i % width.length] || '100%'} 
+            width={typeof width === 'string' ? width : width[i % (Array.isArray(width) ? width.length : 1)] || '100%'} 
           />
         ))}
     </div>
   );
 };
 
-export const LoadingCard = ({ height = "200px", className }) => {
+export const LoadingCard = ({ height = "200px", className = "" }) => {
   return <LoadingEffect className={className} height={height} />;
 };
 
