@@ -26,7 +26,7 @@ export const fetchTikTokTrends = async (): Promise<TrendingHashtag[]> => {
   console.log('Fetching TikTok trends from API (simulated)');
   await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
   
-  // Simulated API response
+  // More realistic MOCK API response data
   const mockResponse: TikTokTrendResponse = {
     statusCode: 200,
     hashtags: [
@@ -35,7 +35,11 @@ export const fetchTikTokTrends = async (): Promise<TrendingHashtag[]> => {
       { name: 'MinimalistDesign', viewCount: 720000, videoCount: 2900, growthRate: 94 },
       { name: 'TechReviews', viewCount: 1800000, videoCount: 6700, growthRate: 76 },
       { name: 'BudgetFinds', viewCount: 450000, videoCount: 1800, growthRate: 65 },
-      { name: 'ProductivityHacks', viewCount: 950000, videoCount: 4100, growthRate: 58 }
+      { name: 'ProductivityHacks', viewCount: 950000, videoCount: 4100, growthRate: 58 },
+      { name: 'WirelessEarbuds', viewCount: 620000, videoCount: 2200, growthRate: 41 },
+      { name: 'SustainableFashion', viewCount: 380000, videoCount: 1500, growthRate: 33 },
+      { name: 'CoffeeRecipes', viewCount: 1100000, videoCount: 4800, growthRate: 29 },
+      { name: 'TravelHacks', viewCount: 510000, videoCount: 2100, growthRate: 22 },
     ]
   };
   
@@ -46,8 +50,8 @@ export const fetchTikTokTrends = async (): Promise<TrendingHashtag[]> => {
     growth: `+${item.growthRate}%`,
     views: formatNumber(item.viewCount),
     videos: formatNumber(item.videoCount),
-    sentiment: getRandomSentiment(),
-    isNew: item.growthRate > 100
+    sentiment: getRandomSentiment(), // Keep using random sentiment for now
+    isNew: item.growthRate > 100 // Example: Mark as "New" if growth rate is high
   }));
 };
 

@@ -1,49 +1,37 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
 
-interface LoadingEffectProps {
+interface LoadingDotsProps {
   className?: string;
-  width?: string;
-  height?: string;
-  animate?: boolean;
 }
 
-const LoadingEffect = ({
-  className,
-  width = "100%",
-  height = "20px",
-  animate = true,
-}: LoadingEffectProps) => {
-  return (
-    <div
-      className={cn(
-        "rounded-md bg-secondary",
-        animate && "animate-pulse-soft",
-        className
-      )}
-      style={{ width, height }}
-    />
-  );
-};
+interface LoadingTextProps {
+  lines?: number;
+}
 
-export const LoadingText = ({ lines = 3, width = "100%" }) => {
+export const LoadingDots: React.FC<LoadingDotsProps> = ({ className = '' }) => {
   return (
-    <div className="space-y-2">
-      {Array(lines)
-        .fill(0)
-        .map((_, i) => (
-          <LoadingEffect 
-            key={i} 
-            width={typeof width === 'string' ? width : width[i % (Array.isArray(width) ? width.length : 1)] || '100%'} 
-          />
-        ))}
+    <div className={`flex space-x-1 items-center ${className}`}>
+      <div className="w-1 h-1 bg-foreground/60 rounded-full animate-pulse"></div>
+      <div className="w-1 h-1 bg-foreground/60 rounded-full animate-pulse delay-75"></div>
+      <div className="w-1 h-1 bg-foreground/60 rounded-full animate-pulse delay-150"></div>
     </div>
   );
 };
 
-export const LoadingCard = ({ height = "200px", className = "" }) => {
-  return <LoadingEffect className={className} height={height} />;
+export const LoadingText: React.FC<LoadingTextProps> = ({ lines = 5 }) => {
+  // Create an array with the specified number of elements
+  const lineArray = Array.from({ length: lines }, (_, i) => i);
+  
+  return (
+    <div className="space-y-3 py-2">
+      {lineArray.map((index) => (
+        <div key={index} className="flex items-center">
+          <div className="h-4 bg-muted animate-pulse rounded w-4/5"></div>
+        </div>
+      ))}
+    </div>
+  );
 };
 
-export default LoadingEffect;
+export default { LoadingDots, LoadingText };
