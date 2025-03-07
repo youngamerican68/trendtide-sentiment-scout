@@ -1,4 +1,3 @@
-
 /**
  * Service for fetching TikTok trend data
  */
@@ -21,7 +20,14 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
   console.log('Fetching actual data from TikAPI');
   
   try {
-    const response = await fetch('https://api.tikapi.io/public/explore');
+    const apiKey = 'YOUR_API_KEY_HERE';
+    const response = await fetch('https://api.tikapi.io/public/explore', {
+      headers: {
+        'accept': 'application/json',
+        'x-project-name': 'trendtide-app',
+        'X-API-KEY': apiKey
+      }
+    });
     
     if (!response.ok) {
       throw new Error(`API request failed with status: ${response.status}`);
