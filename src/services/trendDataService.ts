@@ -92,7 +92,7 @@ export const fetchProductRecommendations = async (): Promise<ProductRecommendati
   ];
 };
 
-// Custom hooks for using the data (unchanged, just using the updated functions)
+// Custom hooks for using the data
 
 export const useTrendingHashtags = () => {
   const [data, setData] = useState<TrendingHashtag[]>([]);
@@ -159,27 +159,27 @@ export const useProductRecommendations = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchProductRecommendations();
-        setData(data);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('An unknown error occurred'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const refetch = async () => {
+    setIsLoading(true);
+    try {
+      const data = await fetchProductRecommendations();
+      setData(data);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    refetch();
     
     // For real-time updates, you could set up a polling interval
-    const intervalId = setInterval(fetchData, 60000); // Update every minute
+    const intervalId = setInterval(refetch, 60000); // Update every minute
     
     return () => clearInterval(intervalId);
   }, []);
 
-  return { data, isLoading, error };
+  return { data, isLoading, error, refetch };
 };
