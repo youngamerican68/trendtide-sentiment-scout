@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { TrendingUp, Users, Eye, RefreshCw } from 'lucide-react';
+import { TrendingUp, Eye, RefreshCw } from 'lucide-react';
 import DashboardCard from './DashboardCard';
-import SentimentBadge from './SentimentBadge';
 import { LoadingText } from './LoadingEffect';
 import { useTrendingHashtags } from '@/services/trendDataService';
 import { toast } from '@/hooks/use-toast';
@@ -44,10 +43,7 @@ const TrendingHashtags = () => {
             <thead>
               <tr className="text-xs text-muted-foreground border-b border-border">
                 <th className="pb-3 text-left font-medium">Hashtag</th>
-                <th className="pb-3 text-right font-medium">Growth</th>
                 <th className="pb-3 text-right font-medium">Views</th>
-                <th className="pb-3 text-right font-medium">Videos</th>
-                <th className="pb-3 text-right font-medium">Sentiment</th>
               </tr>
             </thead>
             <tbody>
@@ -57,30 +53,13 @@ const TrendingHashtags = () => {
                     <div className="flex items-center">
                       <TrendingUp className="h-4 w-4 text-trend-rising mr-2" />
                       <span className="font-medium">{item.hashtag}</span>
-                      {item.isNew && (
-                        <span className="ml-2 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
-                          New
-                        </span>
-                      )}
                     </div>
-                  </td>
-                  <td className="py-3 text-right text-trend-positive font-medium">
-                    {item.growth}
                   </td>
                   <td className="py-3 text-right text-muted-foreground">
                     <div className="flex items-center justify-end">
                       <Eye className="h-3 w-3 mr-1.5 text-muted-foreground/70" />
                       {item.views}
                     </div>
-                  </td>
-                  <td className="py-3 text-right text-muted-foreground">
-                    <div className="flex items-center justify-end">
-                      <Users className="h-3 w-3 mr-1.5 text-muted-foreground/70" />
-                      {item.videos}
-                    </div>
-                  </td>
-                  <td className="py-3 text-right">
-                    <SentimentBadge sentiment={item.sentiment} size="sm" />
                   </td>
                 </tr>
               ))}
