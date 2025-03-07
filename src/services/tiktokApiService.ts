@@ -6,7 +6,6 @@
  */
 
 import { TrendingHashtag } from './trendDataService';
-import axios from 'axios';
 
 // Interface for TikTok API response
 export interface TikTokTrendResponse {
@@ -19,50 +18,13 @@ export interface TikTokTrendResponse {
   }[];
 }
 
-// Interface for TokAPI response
-export interface TokAPIResponse {
-  data: any[]; // We'll refine this type once we see the actual API response structure
-  cursor: string;
-  hasMore: boolean;
-}
-
-// Function to fetch data from TokAPI
-export const fetchTrendingTikTokDataFromTokAPI = async (): Promise<any> => {
-  try {
-    console.log('Fetching trending data from TokAPI...');
-    
-    const response = await axios.get('https://api.tokapi.online/v1/feed/recommended', {
-      headers: {
-        'accept': 'application/json',
-        'x-project-name': 'tokapi',
-        'x-api-key': 'YOUR_API_KEY_HERE' // Placeholder - will be replaced with actual API key
-      }
-    });
-    
-    console.log('TokAPI response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data from TokAPI:', error);
-    throw error;
-  }
-};
-
 // Function to fetch trending hashtags from TikTok API
 export const fetchTikTokTrends = async (): Promise<TrendingHashtag[]> => {
   // In a real implementation, this would call the TikTok API or scraping service
   // For now, we'll simulate a network request with the mock data
   
   console.log('Fetching TikTok trends from API (simulated)');
-  
-  // Call the TokAPI function to log the response, but don't use the data yet
-  try {
-    await fetchTrendingTikTokDataFromTokAPI();
-  } catch (error) {
-    console.log('Failed to fetch from TokAPI, using placeholder data instead');
-  }
-  
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
   
   // Simulated API response
   const mockResponse: TikTokTrendResponse = {
