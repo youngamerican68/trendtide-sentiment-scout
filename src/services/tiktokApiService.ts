@@ -1,3 +1,4 @@
+
 /**
  * Service for fetching TikTok trend data
  */
@@ -20,7 +21,7 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
   console.log('Fetching actual data from TikAPI');
   
   try {
-    const apiKey = 'YOUR_API_KEY_HERE';
+    const apiKey = 'WSGznGUl56zceZfCuT9uFLo6w8jhmjOCepZaYD6cd8P2MDsb'; //  <--  Replaced with actual API key
     const response = await fetch('https://api.tikapi.io/public/explore', {
       headers: {
         'accept': 'application/json',
