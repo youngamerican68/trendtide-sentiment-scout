@@ -20,7 +20,7 @@ const TrendingHashtags = () => {
       console.error("Error refreshing data:", err);
       toast({
         title: "Refresh failed",
-        description: "Using fallback data due to CORS restrictions",
+        description: "Could not fetch real-time trending hashtags data",
         variant: "destructive",
       });
     }
@@ -42,9 +42,9 @@ const TrendingHashtags = () => {
     >
       {error ? (
         <div className="p-4 text-center text-trend-negative">
-          <p>Error loading data. Using fallback data.</p>
+          <p>Error loading real-time data.</p>
           <p className="text-xs mt-1 text-muted-foreground">
-            {error instanceof Error ? error.message : 'CORS issue: Cannot access TikAPI directly from browser'}
+            {error instanceof Error ? error.message : 'Unable to fetch trending hashtags - CORS or network issue'}
           </p>
         </div>
       ) : isLoading ? (
