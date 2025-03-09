@@ -10,11 +10,20 @@ const TrendingHashtags = () => {
   const { data: trendingHashtags, isLoading, error, refetch } = useTrendingHashtags();
 
   const handleRefresh = async () => {
-    await refetch();
-    toast({
-      title: "Data refreshed",
-      description: "Latest trending hashtags loaded",
-    });
+    try {
+      await refetch();
+      toast({
+        title: "Data refreshed",
+        description: "Latest trending hashtags loaded",
+      });
+    } catch (err) {
+      console.error("Error refreshing data:", err);
+      toast({
+        title: "Refresh failed",
+        description: "Could not load trending hashtags",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -34,10 +43,11 @@ const TrendingHashtags = () => {
       {error ? (
         <div className="p-4 text-center text-trend-negative">
           <p>Error loading data. Please try again.</p>
+          <p className="text-xs mt-1 text-muted-foreground">{error instanceof Error ? error.message : 'Unknown error'}</p>
         </div>
       ) : isLoading ? (
         <LoadingText lines={5} />
-      ) : (
+      ) : trendingHashtags && trendingHashtags.length > 0 ? (
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full">
             <thead>
@@ -65,6 +75,10 @@ const TrendingHashtags = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      ) : (
+        <div className="p-4 text-center text-muted-foreground">
+          <p>No trending hashtags found.</p>
         </div>
       )}
     </DashboardCard>
