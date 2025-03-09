@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp, Eye, RefreshCw } from 'lucide-react';
+import { TrendingUp, Eye, RefreshCw, AlertTriangle } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { LoadingText } from './LoadingEffect';
 import { useTrendingHashtags } from '@/services/trendDataService';
@@ -18,13 +18,21 @@ const TrendingHashtags = () => {
       });
     } catch (err) {
       console.error("Error refreshing data:", err);
+      
+      const errorMessage = err instanceof Error && err.message.includes('CORS_ERROR') 
+        ? "CORS restriction: Can't fetch data directly from browser" 
+        : "Could not fetch real-time trending hashtags data";
+      
       toast({
         title: "Refresh failed",
-        description: "Could not fetch real-time trending hashtags data",
+        description: errorMessage,
         variant: "destructive",
       });
     }
   };
+
+  // Determine if it's a CORS error
+  const isCorsError = error?.message.includes('CORS_ERROR');
 
   return (
     <DashboardCard 
@@ -41,11 +49,39 @@ const TrendingHashtags = () => {
       }
     >
       {error ? (
-        <div className="p-4 text-center text-trend-negative">
-          <p>Error loading real-time data.</p>
-          <p className="text-xs mt-1 text-muted-foreground">
-            {error instanceof Error ? error.message : 'Unable to fetch trending hashtags - CORS or network issue'}
-          </p>
+        <div className="p-6 text-center">
+          <div className="flex flex-col items-center justify-center space-y-3">
+            <AlertTriangle className="h-10 w-10 text-yellow-500" />
+            <h3 className="font-medium text-lg">Real-time data unavailable</h3>
+            
+            {isCorsError ? (
+              <>
+                <p className="text-muted-foreground">
+                  CORS restrictions prevent direct API access from the browser.
+                </p>
+                <div className="mt-2 p-3 bg-secondary/40 rounded-md text-xs text-left">
+                  <p className="font-medium mb-1">Possible solutions:</p>
+                  <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
+                    <li>Use a server-side proxy to fetch the data</li>
+                    <li>Contact TikAPI to allow your domain</li>
+                    <li>Try a CORS proxy service (for development only)</li>
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <p className="text-muted-foreground">
+                {error.message || 'Unable to fetch trending hashtags data'}
+              </p>
+            )}
+            
+            <button 
+              className="mt-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-md text-sm font-medium transition-colors"
+              onClick={handleRefresh}
+              disabled={isLoading}
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       ) : isLoading ? (
         <LoadingText lines={5} />

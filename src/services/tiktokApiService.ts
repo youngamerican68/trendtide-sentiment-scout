@@ -22,43 +22,53 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
   
   const apiKey = 'WSGznGUl56zceZfCuT9uFLo6w8jhmjOCepZaYD6cd8P2MDsb'; //  <--  Replaced with actual API key
   
-  // First try without the x-project-name header which causes CORS issues
-  const response = await fetch('https://api.tikapi.io/public/explore', {
-    headers: {
-      'accept': 'application/json',
-      'X-API-KEY': apiKey
+  try {
+    // Using the most basic headers possible to avoid CORS issues
+    const response = await fetch('https://api.tikapi.io/public/explore', {
+      headers: {
+        'Accept': 'application/json',
+        'X-API-KEY': apiKey
+      },
+      mode: 'cors' // Explicitly request CORS mode
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API request failed with status: ${response.status}`);
     }
-  });
-  
-  if (!response.ok) {
-    throw new Error(`API request failed with status: ${response.status}`);
+    
+    const data = await response.json();
+    
+    console.log('TikAPI response data:', data);
+    
+    // Process the data into our expected format
+    const processedData: TikTokTrendResponse = {
+      statusCode: 200,
+      hashtags: (data.hashtags || data.data || []).map((item: any) => ({
+        name: item.name || item.hashtagName || item.title || '',
+        viewCount: item.viewCount || item.views || item.count || 0,
+        videoCount: item.videoCount || item.videos || item.posts || 0,
+        growthRate: item.growthRate || item.growth || 0
+      }))
+    };
+    
+    return processedData;
+  } catch (error) {
+    console.error('Error fetching from TikAPI:', error);
+    
+    // If it's a CORS error, throw a specific error
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      throw new Error('CORS_ERROR: Unable to fetch from TikAPI directly from browser');
+    }
+    
+    throw error;
   }
-  
-  const data = await response.json();
-  
-  console.log('TikAPI response data:', data);
-  
-  // Process the data into our expected format
-  // Note: We're making assumptions about the structure here based on typical API responses
-  // You may need to adjust this mapping based on the actual API response
-  const processedData: TikTokTrendResponse = {
-    statusCode: 200,
-    hashtags: (data.hashtags || data.data || []).map((item: any) => ({
-      name: item.name || item.hashtagName || item.title || '',
-      viewCount: item.viewCount || item.views || item.count || 0,
-      videoCount: item.videoCount || item.videos || item.posts || 0,
-      growthRate: item.growthRate || item.growth || 0
-    }))
-  };
-  
-  return processedData;
 };
 
 // Function to fetch trending hashtags from TikTok API
 export const fetchTikTokTrends = async (): Promise<TrendingHashtag[]> => {
   console.log('Fetching TikTok trends from API');
   
-  // Fetch real data from TikAPI - no fallback to mock data
+  // Get data from TikAPI - no fallback to mock data
   const apiResponse = await fetchTrendingTikTokDataFromTokAPI();
   
   // Transform the API response into our application's data format
