@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp, Eye, RefreshCw, AlertTriangle, Info } from 'lucide-react';
+import { TrendingUp, Eye, RefreshCw, AlertTriangle } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { LoadingText } from './LoadingEffect';
 import { useTrendingHashtags } from '@/services/trendDataService';
@@ -22,25 +22,16 @@ const TrendingHashtags = () => {
       let errorMessage = "Could not fetch real-time trending hashtags data";
       
       if (err instanceof Error) {
-        if (err.message.includes('CORS_ERROR')) {
-          errorMessage = "CORS restriction prevented direct API access";
-        } else if (err.message.includes('API_ERROR')) {
-          errorMessage = "API error: " + err.message.replace('API_ERROR: ', '');
-        }
+        errorMessage = err.message;
       }
       
       toast({
-        title: "Using demonstration data",
+        title: "Data fetching failed",
         description: errorMessage,
         variant: "destructive",
       });
     }
   };
-
-  // Determine error type
-  const isCorsError = error?.message?.includes('CORS_ERROR');
-  const isApiError = error?.message?.includes('API_ERROR');
-  const errorType = isCorsError ? 'cors' : isApiError ? 'api' : 'unknown';
 
   return (
     <DashboardCard 
@@ -59,33 +50,11 @@ const TrendingHashtags = () => {
       {error ? (
         <div className="p-6 text-center">
           <div className="flex flex-col items-center justify-center space-y-3">
-            <Info className="h-10 w-10 text-blue-500" />
-            <h3 className="font-medium text-lg">Using Demo Data</h3>
-            
-            {errorType === 'cors' ? (
-              <>
-                <p className="text-muted-foreground">
-                  TikAPI restricts direct browser access due to CORS policies.
-                </p>
-                <div className="mt-2 p-3 bg-secondary/40 rounded-md text-xs text-left">
-                  <p className="font-medium mb-1">Solutions for production apps:</p>
-                  <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
-                    <li>Create a server-side proxy to fetch the data</li>
-                    <li>Use a CORS-enabled API endpoint</li>
-                    <li>Request an approved domain from TikAPI</li>
-                  </ul>
-                </div>
-              </>
-            ) : errorType === 'api' ? (
-              <p className="text-muted-foreground">
-                {error.message.replace('API_ERROR: ', '')}
-              </p>
-            ) : (
-              <p className="text-muted-foreground">
-                {error.message || 'Unable to fetch trending hashtags data'}
-              </p>
-            )}
-            
+            <AlertTriangle className="h-10 w-10 text-destructive" />
+            <h3 className="font-medium text-lg">API Error</h3>
+            <p className="text-muted-foreground">
+              {error.message || 'Unable to fetch trending hashtags data'}
+            </p>
             <button 
               className="mt-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-md text-sm font-medium transition-colors"
               onClick={handleRefresh}
