@@ -24,11 +24,11 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
   const apiKey = 'YOUR_API_KEY'; // Replace this with your actual API key
   
   try {
-    // Direct API call - in a production app, this should be handled by a backend service
-    // to avoid exposing your API key in the frontend
+    // Use CORS Anywhere proxy now that you have temporary access
+    const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
     const apiUrl = 'https://api.tikapi.io/public/explore';
     
-    const response = await fetch(apiUrl, {
+    const response = await fetch(`${corsProxyUrl}${apiUrl}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
