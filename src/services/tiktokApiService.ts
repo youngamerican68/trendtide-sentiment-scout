@@ -22,10 +22,11 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
   
   try {
     const apiKey = 'WSGznGUl56zceZfCuT9uFLo6w8jhmjOCepZaYD6cd8P2MDsb'; //  <--  Replaced with actual API key
+    
+    // First try without the x-project-name header which causes CORS issues
     const response = await fetch('https://api.tikapi.io/public/explore', {
       headers: {
         'accept': 'application/json',
-        'x-project-name': 'trendtide-app',
         'X-API-KEY': apiKey
       }
     });
@@ -56,22 +57,28 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
     console.error('Error fetching from TikAPI:', error);
     
     // Fallback to mock data if API request fails
-    return {
-      statusCode: 200,
-      hashtags: [
-        { name: 'SmartGadgets', viewCount: 1200000, videoCount: 5400, growthRate: 242 },
-        { name: 'HomeOfficeSetup', viewCount: 890000, videoCount: 3200, growthRate: 128 },
-        { name: 'MinimalistDesign', viewCount: 720000, videoCount: 2900, growthRate: 94 },
-        { name: 'TechReviews', viewCount: 1800000, videoCount: 6700, growthRate: 76 },
-        { name: 'BudgetFinds', viewCount: 450000, videoCount: 1800, growthRate: 65 },
-        { name: 'ProductivityHacks', viewCount: 950000, videoCount: 4100, growthRate: 58 },
-        { name: 'WirelessEarbuds', viewCount: 620000, videoCount: 2200, growthRate: 41 },
-        { name: 'SustainableFashion', viewCount: 380000, videoCount: 1500, growthRate: 33 },
-        { name: 'CoffeeRecipes', viewCount: 1100000, videoCount: 4800, growthRate: 29 },
-        { name: 'TravelHacks', viewCount: 510000, videoCount: 2100, growthRate: 22 },
-      ]
-    };
+    console.log('Using fallback mock data due to API error');
+    return getMockTrendingData();
   }
+};
+
+// Function to get mock trending data in case the API fails
+const getMockTrendingData = (): TikTokTrendResponse => {
+  return {
+    statusCode: 200,
+    hashtags: [
+      { name: 'SmartGadgets', viewCount: 1200000, videoCount: 5400, growthRate: 242 },
+      { name: 'HomeOfficeSetup', viewCount: 890000, videoCount: 3200, growthRate: 128 },
+      { name: 'MinimalistDesign', viewCount: 720000, videoCount: 2900, growthRate: 94 },
+      { name: 'TechReviews', viewCount: 1800000, videoCount: 6700, growthRate: 76 },
+      { name: 'BudgetFinds', viewCount: 450000, videoCount: 1800, growthRate: 65 },
+      { name: 'ProductivityHacks', viewCount: 950000, videoCount: 4100, growthRate: 58 },
+      { name: 'WirelessEarbuds', viewCount: 620000, videoCount: 2200, growthRate: 41 },
+      { name: 'SustainableFashion', viewCount: 380000, videoCount: 1500, growthRate: 33 },
+      { name: 'CoffeeRecipes', viewCount: 1100000, videoCount: 4800, growthRate: 29 },
+      { name: 'TravelHacks', viewCount: 510000, videoCount: 2100, growthRate: 22 },
+    ]
+  };
 };
 
 // Function to fetch trending hashtags from TikTok API
