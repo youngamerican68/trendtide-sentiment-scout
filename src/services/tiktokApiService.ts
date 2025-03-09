@@ -24,17 +24,15 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
   const apiKey = 'YOUR_API_KEY'; // Replace this with your actual API key
   
   try {
-    // Use a CORS proxy to prevent CORS issues
-    const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    // Direct API call - in a production app, this should be handled by a backend service
+    // to avoid exposing your API key in the frontend
     const apiUrl = 'https://api.tikapi.io/public/explore';
     
-    // Fetch with API key in the headers through the CORS proxy
-    const response = await fetch(`${corsProxyUrl}${apiUrl}`, {
+    const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'X-API-KEY': apiKey,
-        'Origin': window.location.origin
       }
     });
     
@@ -60,7 +58,6 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
     return processedData;
   } catch (error) {
     console.error('Error fetching from TikAPI:', error);
-    // No fallback to mock data - just throw the error
     throw error;
   }
 };
