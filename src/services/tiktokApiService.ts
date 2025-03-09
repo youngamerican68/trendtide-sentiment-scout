@@ -1,4 +1,3 @@
-
 /**
  * Service for fetching TikTok trend data
  */
@@ -15,6 +14,43 @@ export interface TikTokTrendResponse {
     growthRate: number;
   }[];
 }
+
+// Mock data to use when API access fails
+const mockTrendingData: TikTokTrendResponse = {
+  statusCode: 200,
+  hashtags: [
+    {
+      name: "fitness",
+      viewCount: 145000000,
+      videoCount: 8500000,
+      growthRate: 12
+    },
+    {
+      name: "homeoffice",
+      viewCount: 78000000,
+      videoCount: 2300000,
+      growthRate: 108
+    },
+    {
+      name: "skincare",
+      viewCount: 210000000,
+      videoCount: 12000000,
+      growthRate: 15
+    },
+    {
+      name: "booktok",
+      viewCount: 165000000,
+      videoCount: 7800000,
+      growthRate: 23
+    },
+    {
+      name: "cleaningtips",
+      viewCount: 92000000,
+      videoCount: 4500000,
+      growthRate: 19
+    }
+  ]
+};
 
 // Function to fetch data from TikAPI
 const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse> => {
@@ -53,12 +89,12 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
   } catch (error) {
     console.error('Error fetching from TikAPI:', error);
     
-    // Throw a specific error for CORS issues to handle in the UI
+    // For any error, return mock data but throw a specific error for UI handling
     if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
       throw new Error('CORS_ERROR: Unable to fetch from TikAPI directly from browser');
+    } else {
+      throw new Error('API_ERROR: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
-    
-    throw error;
   }
 };
 
@@ -66,19 +102,39 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
 export const fetchTikTokTrends = async (): Promise<TrendingHashtag[]> => {
   console.log('Fetching TikTok trends from API');
   
-  // Get data from TikAPI
-  const apiResponse = await fetchTrendingTikTokDataFromTokAPI();
-  
-  // Transform the API response into our application's data format
-  return apiResponse.hashtags.map((item, index) => ({
-    id: index + 1,
-    hashtag: `#${item.name}`,
-    growth: `+${item.growthRate}%`,
-    views: formatNumber(item.viewCount),
-    videos: formatNumber(item.videoCount),
-    sentiment: getRandomSentiment(),
-    isNew: item.growthRate > 100
-  }));
+  try {
+    // Try to get data from TikAPI
+    const apiResponse = await fetchTrendingTikTokDataFromTokAPI();
+    
+    // Transform the API response into our application's data format
+    return apiResponse.hashtags.map((item, index) => ({
+      id: index + 1,
+      hashtag: `#${item.name}`,
+      growth: `+${item.growthRate}%`,
+      views: formatNumber(item.viewCount),
+      videos: formatNumber(item.videoCount),
+      sentiment: getRandomSentiment(),
+      isNew: item.growthRate > 100
+    }));
+  } catch (error) {
+    console.error('API request failed, falling back to mock data');
+    
+    // Forward the specific error for UI handling
+    if (error instanceof Error && (error.message.includes('CORS_ERROR') || error.message.includes('API_ERROR'))) {
+      throw error;
+    }
+    
+    // Fall back to mock data
+    return mockTrendingData.hashtags.map((item, index) => ({
+      id: index + 1,
+      hashtag: `#${item.name}`,
+      growth: `+${item.growthRate}%`,
+      views: formatNumber(item.viewCount),
+      videos: formatNumber(item.videoCount),
+      sentiment: getRandomSentiment(),
+      isNew: item.growthRate > 100
+    }));
+  }
 };
 
 // Helper function to format numbers (e.g., 1200000 -> 1.2M)

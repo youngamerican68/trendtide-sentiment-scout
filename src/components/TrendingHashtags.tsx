@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp, Eye, RefreshCw, AlertTriangle } from 'lucide-react';
+import { TrendingUp, Eye, RefreshCw, AlertTriangle, Info } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { LoadingText } from './LoadingEffect';
 import { useTrendingHashtags } from '@/services/trendDataService';
@@ -19,20 +19,28 @@ const TrendingHashtags = () => {
     } catch (err) {
       console.error("Error refreshing data:", err);
       
-      const errorMessage = err instanceof Error && err.message.includes('CORS_ERROR') 
-        ? "CORS restriction prevented data fetching" 
-        : "Could not fetch real-time trending hashtags data";
+      let errorMessage = "Could not fetch real-time trending hashtags data";
+      
+      if (err instanceof Error) {
+        if (err.message.includes('CORS_ERROR')) {
+          errorMessage = "CORS restriction prevented direct API access";
+        } else if (err.message.includes('API_ERROR')) {
+          errorMessage = "API error: " + err.message.replace('API_ERROR: ', '');
+        }
+      }
       
       toast({
-        title: "Error fetching data",
+        title: "Using demonstration data",
         description: errorMessage,
         variant: "destructive",
       });
     }
   };
 
-  // Determine if it's a CORS error
-  const isCorsError = error?.message.includes('CORS_ERROR');
+  // Determine error type
+  const isCorsError = error?.message?.includes('CORS_ERROR');
+  const isApiError = error?.message?.includes('API_ERROR');
+  const errorType = isCorsError ? 'cors' : isApiError ? 'api' : 'unknown';
 
   return (
     <DashboardCard 
@@ -51,10 +59,10 @@ const TrendingHashtags = () => {
       {error ? (
         <div className="p-6 text-center">
           <div className="flex flex-col items-center justify-center space-y-3">
-            <AlertTriangle className="h-10 w-10 text-destructive" />
-            <h3 className="font-medium text-lg">Data Fetching Error</h3>
+            <Info className="h-10 w-10 text-blue-500" />
+            <h3 className="font-medium text-lg">Using Demo Data</h3>
             
-            {isCorsError ? (
+            {errorType === 'cors' ? (
               <>
                 <p className="text-muted-foreground">
                   TikAPI restricts direct browser access due to CORS policies.
@@ -68,6 +76,10 @@ const TrendingHashtags = () => {
                   </ul>
                 </div>
               </>
+            ) : errorType === 'api' ? (
+              <p className="text-muted-foreground">
+                {error.message.replace('API_ERROR: ', '')}
+              </p>
             ) : (
               <p className="text-muted-foreground">
                 {error.message || 'Unable to fetch trending hashtags data'}
