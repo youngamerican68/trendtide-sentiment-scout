@@ -1,4 +1,3 @@
-
 /**
  * Service for fetching TikTok trend data
  */
@@ -42,7 +41,7 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
     
     const data = await response.json();
     
-    console.log('TikAPI response data:', data);
+    console.log('TikAPI response data:', JSON.stringify(data, null, 2)); // Log FULL JSON data with indentation
     
     // Process the data based on the actual response structure
     // Based on the console logs, we need to extract from itemList
