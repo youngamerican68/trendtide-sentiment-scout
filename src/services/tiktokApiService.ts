@@ -16,48 +16,9 @@ export interface TikTokTrendResponse {
   }[];
 }
 
-// Sample data to use when API access is restricted due to CORS
-const sampleTrendingData: TikTokTrendResponse = {
-  statusCode: 200,
-  hashtags: [
-    {
-      name: "fitness",
-      viewCount: 145000000,
-      videoCount: 8500000,
-      growthRate: 12
-    },
-    {
-      name: "homeoffice",
-      viewCount: 78000000,
-      videoCount: 2300000,
-      growthRate: 108
-    },
-    {
-      name: "skincare",
-      viewCount: 210000000,
-      videoCount: 12000000,
-      growthRate: 15
-    },
-    {
-      name: "booktok",
-      viewCount: 165000000,
-      videoCount: 7800000,
-      growthRate: 23
-    },
-    {
-      name: "cleaningtips",
-      viewCount: 92000000,
-      videoCount: 4500000,
-      growthRate: 19
-    }
-  ]
-};
-
 // Function to fetch data from TikAPI
 const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse> => {
   console.log('Fetching actual data from TikAPI');
-  
-  const apiKey = 'WSGznGUl56zceZfCuT9uFLo6w8jhmjOCepZaYD6cd8P2MDsb';
   
   try {
     // Attempt to fetch with minimal headers to avoid CORS issues
@@ -65,7 +26,8 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
       method: 'GET',
       headers: {
         'Accept': 'application/json'
-      }
+      },
+      mode: 'cors' // Explicitly set CORS mode
     });
     
     if (!response.ok) {
@@ -91,13 +53,12 @@ const fetchTrendingTikTokDataFromTokAPI = async (): Promise<TikTokTrendResponse>
   } catch (error) {
     console.error('Error fetching from TikAPI:', error);
     
-    // If it's a CORS error, use sample data instead
+    // Throw a specific error for CORS issues to handle in the UI
     if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-      console.log('CORS restriction detected, using sample data for demonstration');
-      return sampleTrendingData;
+      throw new Error('CORS_ERROR: Unable to fetch from TikAPI directly from browser');
     }
     
-    throw new Error('CORS_ERROR: Unable to fetch from TikAPI directly from browser');
+    throw error;
   }
 };
 

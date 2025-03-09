@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp, Eye, RefreshCw, AlertTriangle, Info } from 'lucide-react';
+import { TrendingUp, Eye, RefreshCw, AlertTriangle } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { LoadingText } from './LoadingEffect';
 import { useTrendingHashtags } from '@/services/trendDataService';
@@ -20,11 +20,11 @@ const TrendingHashtags = () => {
       console.error("Error refreshing data:", err);
       
       const errorMessage = err instanceof Error && err.message.includes('CORS_ERROR') 
-        ? "CORS restriction: Using sample data for demonstration" 
+        ? "CORS restriction prevented data fetching" 
         : "Could not fetch real-time trending hashtags data";
       
       toast({
-        title: "API Access Limited",
+        title: "Error fetching data",
         description: errorMessage,
         variant: "destructive",
       });
@@ -51,20 +51,20 @@ const TrendingHashtags = () => {
       {error ? (
         <div className="p-6 text-center">
           <div className="flex flex-col items-center justify-center space-y-3">
-            <Info className="h-10 w-10 text-blue-500" />
-            <h3 className="font-medium text-lg">Using Sample Data</h3>
+            <AlertTriangle className="h-10 w-10 text-destructive" />
+            <h3 className="font-medium text-lg">Data Fetching Error</h3>
             
             {isCorsError ? (
               <>
                 <p className="text-muted-foreground">
-                  The TikAPI restricts direct browser access due to CORS policies.
+                  TikAPI restricts direct browser access due to CORS policies.
                 </p>
                 <div className="mt-2 p-3 bg-secondary/40 rounded-md text-xs text-left">
-                  <p className="font-medium mb-1">For a production app, you would need:</p>
+                  <p className="font-medium mb-1">Solutions for production apps:</p>
                   <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
-                    <li>A server-side proxy to fetch the data</li>
-                    <li>An approved domain from TikAPI</li>
-                    <li>Backend implementation to handle API keys securely</li>
+                    <li>Create a server-side proxy to fetch the data</li>
+                    <li>Use a CORS-enabled API endpoint</li>
+                    <li>Request an approved domain from TikAPI</li>
                   </ul>
                 </div>
               </>
@@ -79,7 +79,7 @@ const TrendingHashtags = () => {
               onClick={handleRefresh}
               disabled={isLoading}
             >
-              Refresh Data
+              Try Again
             </button>
           </div>
         </div>
